@@ -1,4 +1,4 @@
-import type { Marker as SavedMarker } from '@/utils/markersStorage';
+import type { Marker as SavedMarker } from '@/api/api';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { MapPressEvent, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -45,7 +45,26 @@ export default function Map({
           longitudeDelta,
         }}
       >
-        <Marker coordinate={{ latitude, longitude }} />
+        {/* User marker */}
+        <Marker 
+          coordinate={{ latitude, longitude }}
+          pinColor="transparent"
+        >
+        {/* Other markers */}
+          <View style={{
+            width: 22,
+            height: 22,
+            borderRadius: 16,
+            backgroundColor: '#0a84ff',
+            borderWidth: 2,
+            borderColor: '#fff',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }} />
+        </Marker>
         {selectedCoordinate && (
           <Marker coordinate={selectedCoordinate} pinColor={'#0a84ff'} />
         )}
