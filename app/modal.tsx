@@ -69,7 +69,7 @@ export default function Modal() {
       />
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ backgroundColor: '#fff', margin: 12, borderRadius: 16, padding: 16, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 6 }}>
-          <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 12 }}>Observation</Text>
+          <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 12 }}>{edit ? "Ajouter une" : "Créer une "} observation</Text>
 
             {/* Image */}
             <TouchableOpacity onPress={() => setShowPhotoPicker(true)} activeOpacity={0.85}>
