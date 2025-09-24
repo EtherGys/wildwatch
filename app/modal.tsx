@@ -1,8 +1,8 @@
-import { getMarkerByCoords, removeMarker, upsertMarker } from '@/utils/markersStorage';
+import { getMarkerByCoords, removeMarker, upsertMarker } from '@/api/api';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -13,15 +13,15 @@ export default function Modal() {
   const lat = params.latitude ? Number(params.latitude) : undefined;
   const lon = params.longitude ? Number(params.longitude) : undefined;
 
-  const [name, setName] = React.useState<string>('');
-  const [dateISO, setDateISO] = React.useState<string>(new Date().toISOString().slice(0, 10));
-  const [dateText, setDateText] = React.useState<string>(new Intl.DateTimeFormat('fr-FR').format(new Date()));
-  const [photoUri, setPhotoUri] = React.useState<string | undefined>(undefined);
-  const [nameError, setNameError] = React.useState<string | null>(null);
+  const [name, setName] = useState<string>('');
+  const [dateISO, setDateISO] = useState<string>(new Date().toISOString().slice(0, 10));
+  const [dateText, setDateText] = useState<string>(new Intl.DateTimeFormat('fr-FR').format(new Date()));
+  const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
+  const [nameError, setNameError] = useState<string | null>(null);
   const isSaveDisabled = !name.trim();
-  const [showDatePicker, setShowDatePicker] = React.useState<boolean>(false);
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       if (typeof lat === 'number' && typeof lon === 'number') {
         const existing = await getMarkerByCoords(lat, lon);

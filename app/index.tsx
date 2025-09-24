@@ -1,7 +1,7 @@
 
+import { getMarkers } from '@/api/api';
 import Map from '@/components/Map';
 import { useCurrentPosition } from '@/hook/location';
-import { getMarkers } from '@/utils/markersStorage';
 import { useFocusEffect } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
@@ -64,6 +64,10 @@ export default function Index() {
       };
     }, [])
   );
+  function getCurrentLocation(): void {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <View style={{ flex: 1 }}>
