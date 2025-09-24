@@ -1,6 +1,6 @@
 import type { Marker as SavedMarker } from '@/api/api';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import MapView, { MapPressEvent, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 type MapProps = {
@@ -69,11 +69,23 @@ export default function Map({
           <Marker coordinate={selectedCoordinate} pinColor={'#0a84ff'} />
         )}
         {savedMarkers?.map((m, idx) => (
-          <Marker
+          
+            <Marker
             key={`${m.latitude}-${m.longitude}-${idx}`}
+            title={m.name}
             coordinate={m}
             onPress={() => onSavedMarkerPress && onSavedMarkerPress(m)}
-          />
+            pinColor='#FAA452'
+          >
+ 
+{/*          
+              <Image 
+                source={{ uri: m.photoUri }}
+                style={styles.savedMarkerImage}
+              />
+       */}
+           
+          </Marker>
         ))}
       </MapView>
     </View>
@@ -88,4 +100,24 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  savedMarkerContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#dba35fff',
+    borderWidth: 1,
+    borderColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  savedMarkerImage: {
+    width: 33,
+    height: 33,
+    borderRadius: 15,
+  }
 });
