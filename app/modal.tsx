@@ -1,4 +1,5 @@
 import { getMarkerByCoords, removeMarker, upsertMarker } from '@/api/api';
+import PhotoPickerModal from '@/components/PhotoPickerModal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
@@ -20,6 +21,7 @@ export default function Modal() {
   const [nameError, setNameError] = useState<string | null>(null);
   const isSaveDisabled = !name.trim();
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [showPhotoPicker, setShowPhotoPicker] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -37,6 +39,7 @@ export default function Modal() {
   }, [lat, lon]);
 
   async function pickImageFromLibrary() {
+    setShowPhotoPicker(false);
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (perm.status !== 'granted') return;
     const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8 });
@@ -46,6 +49,7 @@ export default function Modal() {
   }
 
   async function takePhoto() {
+    setShowPhotoPicker(false);
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (perm.status !== 'granted') return;
     const res = await ImagePicker.launchCameraAsync({ quality: 0.8 });
@@ -66,8 +70,8 @@ export default function Modal() {
         <View style={{ backgroundColor: '#fff', margin: 12, borderRadius: 16, padding: 16, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 6 }}>
           <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 12 }}>Observation</Text>
 
-            {/* Image avatar: tap=library, long-press=camera */}
-            <TouchableOpacity onPress={pickImageFromLibrary} onLongPress={takePhoto} activeOpacity={0.85}>
+            {/* Image avatar: tap to show photo picker modal */}
+            <TouchableOpacity onPress={() => setShowPhotoPicker(true)} activeOpacity={0.85}>
               {photoUri ? (
                 <Image source={{ uri: photoUri }} style={{ width: 120, height: 120, borderRadius: 60, alignSelf: 'center', marginBottom: 16 }} />
               ) : (
@@ -119,6 +123,14 @@ export default function Modal() {
                 maximumDate={new Date()}
               />
             )}
+
+          {/* Photo picker modal */}
+          <PhotoPickerModal
+            visible={showPhotoPicker}
+            onClose={() => setShowPhotoPicker(false)}
+            onTakePhoto={takePhoto}
+            onPickFromLibrary={pickImageFromLibrary}
+          />
 
           <Text style={{ fontWeight: '600', marginBottom: 6 }}>Coordonnées</Text>
           <Text style={{ color: '#333' }}>lat: {lat?.toFixed ? lat.toFixed(6) : '-'}</Text>

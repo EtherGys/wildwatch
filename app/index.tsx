@@ -51,13 +51,16 @@ export default function Index() {
     })();
   }, []);
 
-  // Reload saved markers after closing modal
+  // Reload saved markers after closing modal and clear selected coordinate
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
       (async () => {
         const markers = await getMarkers();
-        if (isActive) setSavedMarkers(markers);
+        if (isActive) {
+          setSavedMarkers(markers);
+          setSelected(null); // Clear the selected coordinate when modal closes
+        }
       })();
       return () => {
         isActive = false;
