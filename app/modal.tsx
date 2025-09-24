@@ -21,6 +21,7 @@ export default function Modal() {
   const [nameError, setNameError] = useState<string | null>(null);
   const isSaveDisabled = !name.trim();
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
   const [showPhotoPicker, setShowPhotoPicker] = useState<boolean>(false);
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function Modal() {
       if (typeof lat === 'number' && typeof lon === 'number') {
         const existing = await getMarkerByCoords(lat, lon);
         if (existing) {
+          setEdit(true)
           setName(existing.name ?? '');
           const iso = existing.dateISO ?? new Date().toISOString().slice(0, 10);
           setDateISO(iso);
@@ -65,18 +67,17 @@ export default function Modal() {
         onPress={() => navigation.goBack()}
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.25)' }}
       />
-
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ backgroundColor: '#fff', margin: 12, borderRadius: 16, padding: 16, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, elevation: 6 }}>
           <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 12 }}>Observation</Text>
 
-            {/* Image avatar: tap to show photo picker modal */}
+            {/* Image */}
             <TouchableOpacity onPress={() => setShowPhotoPicker(true)} activeOpacity={0.85}>
               {photoUri ? (
                 <Image source={{ uri: photoUri }} style={{ width: 120, height: 120, borderRadius: 60, alignSelf: 'center', marginBottom: 16 }} />
               ) : (
                 <View style={{ width: 120, height: 120, borderRadius: 60, backgroundColor: '#e6e6e6', alignSelf: 'center', marginBottom: 16, alignItems: 'center', justifyContent: 'center' }}>
-                  <Text>Ajouter une image</Text>
+                  <Text style={{ fontSize: 22, color: "gray", fontWeight: '700' }}>+ Photo</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -132,10 +133,6 @@ export default function Modal() {
             onPickFromLibrary={pickImageFromLibrary}
           />
 
-          <Text style={{ fontWeight: '600', marginBottom: 6 }}>Coordonnées</Text>
-          <Text style={{ color: '#333' }}>lat: {lat?.toFixed ? lat.toFixed(6) : '-'}</Text>
-          <Text style={{ color: '#333', marginTop: 4 }}>long: {lon?.toFixed ? lon.toFixed(6) : '-'}</Text>
-
           <TouchableOpacity
             disabled={isSaveDisabled}
             onPress={async () => {
@@ -148,21 +145,21 @@ export default function Modal() {
                 navigation.goBack();
               }
             }}
-            style={{ marginTop: 16, backgroundColor: isSaveDisabled ? '#a8c7ff' : '#0a84ff', paddingVertical: 12, borderRadius: 12, opacity: isSaveDisabled ? 0.7 : 1 }}
+            style={{ marginTop: 16, backgroundColor: isSaveDisabled ? '#86aef9ff' : '#0a84ff', paddingVertical: 12, borderRadius: 22, opacity: isSaveDisabled ? 0.7 : 1 }}
           >
             <Text style={{ textAlign: 'center', color: '#fff', fontWeight: '600' }}>Enregistrer</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+         {edit && <TouchableOpacity
             onPress={async () => {
               if (typeof lat === 'number' && typeof lon === 'number') {
                 await removeMarker({ latitude: lat, longitude: lon });
                 navigation.goBack();
               }
             }}
-            style={{ marginTop: 10, backgroundColor: '#d12c3c', paddingVertical: 12, borderRadius: 12 }}
+            style={{ marginTop: 10, backgroundColor: '#d12c3c', paddingVertical: 12, borderRadius: 22 }}
           >
             <Text style={{ textAlign: 'center', color: '#fff', fontWeight: '600' }}>Supprimer</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 14, paddingVertical: 10 }}>
             <Text style={{ textAlign: 'center', color: '#222' }}>Annuler</Text>
           </TouchableOpacity>
