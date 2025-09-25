@@ -145,7 +145,6 @@ export default function Modal() {
     disabled={isSaveDisabled}
     color="primary"
     />
-    
     {edit && (
       <ActionButton
       title="Supprimer"

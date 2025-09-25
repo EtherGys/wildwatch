@@ -1,65 +1,42 @@
-
 import { getMarkers } from '@/api/api';
 import Map from '@/components/Map';
-import { useCurrentPosition } from '@/hook/location';
+import { useCurrentPosition } from '@/hook/useCurrentPosition'; // Assure-toi que le path est correct
 import { useFocusEffect } from '@react-navigation/native';
-import * as Location from 'expo-location';
 import { router } from 'expo-router';
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Linking, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
 export default function Index() {
-  
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    location,
+    error,
+    loading: isLoading,
+    permissionDenied,
+    retry,
+    openSettings,
+  } = useCurrentPosition();
+
   const [isMapLoading, setIsMapLoading] = useState<boolean>(false);
-  const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
   const [selected, setSelected] = useState<{ latitude: number; longitude: number } | null>(null);
   const [savedMarkers, setSavedMarkers] = useState<{ latitude: number; longitude: number }[]>([]);
 
+  // Charger les markers au démarrage
   useEffect(() => {
-    async function getCurrentLocation() {
-      setLoading(true);
-      setError(null);
-      try {
-        const current = await useCurrentPosition();
-        if (!current) {
-          setError("Permission refusée ou indisponible.");
-          setLocation(null);
-          setPermissionDenied(true);
-        } else {
-          setLocation(current as Location.LocationObject);
-          setIsMapLoading(true);
-          setPermissionDenied(false);
-        }
-      } catch (e) {
-        setError("Impossible de récupérer la localisation.");
-        setLocation(null);
-        setPermissionDenied(false);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    getCurrentLocation();
     (async () => {
       const markers = await getMarkers();
       setSavedMarkers(markers);
     })();
   }, []);
 
-
   useFocusEffect(
     useCallback(() => {
-      let isActive = true;   
+      let isActive = true;
       (async () => {
         const markers = await getMarkers();
         if (isActive) {
           setSavedMarkers(markers);
-          setSelected(null); 
+          setSelected(null);
         }
       })();
       return () => {
@@ -67,9 +44,6 @@ export default function Index() {
       };
     }, [])
   );
-  function getCurrentLocation(): void {
-    throw new Error('Function not implemented.');
-  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -89,15 +63,28 @@ export default function Index() {
             <Text style={{ textAlign: 'center', color: '#555' }}>{error}</Text>
             <View style={{ marginTop: 16, width: '100%', alignItems: 'center' }}>
               <TouchableOpacity
-                onPress={() => getCurrentLocation()}
-                style={{ backgroundColor: '#0a84ff', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 10, alignSelf: 'stretch' }}
+                onPress={retry}
+                style={{
+                  backgroundColor: '#0a84ff',
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderRadius: 10,
+                  alignSelf: 'stretch',
+                }}
               >
                 <Text style={{ color: '#fff', textAlign: 'center', fontWeight: '600' }}>Réessayer</Text>
               </TouchableOpacity>
               {permissionDenied && (
                 <TouchableOpacity
-                  onPress={() => Linking.openSettings()}
-                  style={{ backgroundColor: '#111', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 10, marginTop: 10, alignSelf: 'stretch' }}
+                  onPress={openSettings}
+                  style={{
+                    backgroundColor: '#111',
+                    paddingVertical: 12,
+                    paddingHorizontal: 16,
+                    borderRadius: 10,
+                    marginTop: 10,
+                    alignSelf: 'stretch',
+                  }}
                 >
                   <Text style={{ color: '#fff', textAlign: 'center' }}>Ouvrir les réglages</Text>
                 </TouchableOpacity>
@@ -136,9 +123,20 @@ export default function Index() {
               }}
             />
 
-            {/* Map loading  */}
+            {/* Map loading */}
             {isMapLoading && (
-              <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.6)' }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.6)',
+                }}
+              >
                 <ActivityIndicator size="small" color="#0000ff" />
                 <Text style={{ marginTop: 8 }}>Chargement de la carte…</Text>
               </View>
@@ -155,11 +153,29 @@ export default function Index() {
                 gap: 8,
               }}
             >
-              <View style={{ backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 16 }}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>lat : {location?.coords?.latitude?.toFixed ? location.coords.latitude.toFixed(5) : ''}</Text>
+              <View
+                style={{
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: 16,
+                }}
+              >
+                <Text style={{ color: '#fff', fontSize: 12 }}>
+                  lat : {location.coords.latitude.toFixed(5)}
+                </Text>
               </View>
-              <View style={{ backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 16 }}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>long : {location?.coords?.longitude?.toFixed ? location.coords.longitude.toFixed(5) : ''}</Text>
+              <View
+                style={{
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: 16,
+                }}
+              >
+                <Text style={{ color: '#fff', fontSize: 12 }}>
+                  long : {location.coords.longitude.toFixed(5)}
+                </Text>
               </View>
             </View>
           </View>
@@ -167,5 +183,4 @@ export default function Index() {
       </View>
     </SafeAreaView>
   );
-    }
-    
+}
