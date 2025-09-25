@@ -26,9 +26,7 @@ export async function getMarkers(): Promise<Marker[]> {
 
 export async function upsertMarker(marker: Marker): Promise<void> {
   const existing = await getMarkers();
-  const idx = existing.findIndex(
-    (m) => m.latitude == marker.latitude && m.longitude == marker.longitude
-  );
+const idx = existing.findIndex((m) => areCoordsEqual(m, marker));
   if (idx >= 0) {
     existing[idx] = { ...existing[idx], ...marker };
     await AsyncStorage.setItem(MARKERS_KEY, JSON.stringify(existing));
@@ -40,15 +38,21 @@ export async function upsertMarker(marker: Marker): Promise<void> {
 
 export async function removeMarker(marker: Marker): Promise<void> {
   const existing = await getMarkers();
-  const next = existing.filter(
-    (m) => !((m.latitude, marker.latitude) && m.longitude == marker.longitude)
-  );
+  const next = existing.filter((m) => !areCoordsEqual(m, marker));
   await AsyncStorage.setItem(MARKERS_KEY, JSON.stringify(next));
 }
 
+
 export async function getMarkerByCoords(latitude: number, longitude: number): Promise<Marker | undefined> {
   const all = await getMarkers();
-  return all.find((m) => m.latitude == latitude && m.longitude == longitude);
+return all.find((m) => Math.abs(m.latitude - latitude) < 1e-6 && Math.abs(m.longitude - longitude) < 1e-6);
+
 }
 
+function areCoordsEqual(a: Marker, b: Marker, epsilon = 1e-6): boolean {
+  return (
+    Math.abs(a.latitude - b.latitude) < epsilon &&
+    Math.abs(a.longitude - b.longitude) < epsilon
+  );
+}
 

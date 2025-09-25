@@ -19,7 +19,7 @@ export default function Index() {
   const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
   const [selected, setSelected] = useState<{ latitude: number; longitude: number } | null>(null);
   const [savedMarkers, setSavedMarkers] = useState<{ latitude: number; longitude: number }[]>([]);
-  
+
   useEffect(() => {
     async function getCurrentLocation() {
       setLoading(true);
@@ -51,15 +51,15 @@ export default function Index() {
     })();
   }, []);
 
-  // Reload saved markers after closing modal and clear selected coordinate
+
   useFocusEffect(
     useCallback(() => {
-      let isActive = true;
+      let isActive = true;   
       (async () => {
         const markers = await getMarkers();
         if (isActive) {
           setSavedMarkers(markers);
-          setSelected(null); // Clear the selected coordinate when modal closes
+          setSelected(null); 
         }
       })();
       return () => {
