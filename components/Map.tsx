@@ -84,12 +84,14 @@ export default function Map({
             pinColor="#FAA452"
           >
             <ReanimatedMarker>
-              {m.photoUri && (
-                <Image
-                  source={{ uri: m.photoUri }}
-                  style={styles.savedMarkerImage}
-                />
-              )}
+              <Image
+                source={
+                  m.photoUri
+                    ? { uri: m.photoUri }
+                    : require("../assets/images/raccoon.jpg")
+                }
+                style={styles.savedMarkerImage}
+              />
             </ReanimatedMarker>
           </Marker>
         ))}
