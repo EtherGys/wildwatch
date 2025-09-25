@@ -2,6 +2,7 @@ import type { Marker as SavedMarker } from '@/api/api';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import MapView, { MapPressEvent, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import ReanimatedMarker from './ReanimatedMarker';
 
 type MapProps = {
   latitude: number;
@@ -69,20 +70,23 @@ export default function Map({
           <Marker coordinate={selectedCoordinate} pinColor={'#0a84ff'} />
         )}
         {savedMarkers?.map((m, idx) => (
-          
-            <Marker
-            key={`${m.latitude}-${m.longitude}-${idx}`}
-            title={m.name}
-            coordinate={m}
-            onPress={() => onSavedMarkerPress && onSavedMarkerPress(m)}
-            pinColor='#FAA452'
-          >
-              <Image 
-                source={{ uri: m.photoUri }}
-                style={styles.savedMarkerImage}
-              />
-          </Marker>
-        ))}
+  <Marker
+    key={`${m.latitude}-${m.longitude}-${idx}`}
+    title={m.name}
+    coordinate={m}
+    onPress={() => onSavedMarkerPress && onSavedMarkerPress(m)}
+    pinColor="#FAA452"
+  >
+    <ReanimatedMarker>
+      {m.photoUri && (
+        <Image
+          source={{ uri: m.photoUri }}
+          style={styles.savedMarkerImage}
+        />
+      )}
+    </ReanimatedMarker>
+  </Marker>
+))}
       </MapView>
     </View>
   );
