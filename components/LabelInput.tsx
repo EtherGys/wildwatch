@@ -1,5 +1,11 @@
-import React from 'react';
-import { Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native';
+import React from "react";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from "react-native";
 
 type Props = {
   label: string;
@@ -28,10 +34,10 @@ export default function LabelInput({
       editable={editable && !onPress}
       style={[
         styles.input,
-        { borderColor: error ? '#d12c3c' : '#ddd' },
+        { borderColor: error ? "#d12c3c" : "#ddd" },
         !editable || onPress ? styles.readonly : {},
       ]}
-      pointerEvents={onPress ? 'none' : 'auto'}
+      pointerEvents={onPress ? "none" : "auto"}
     />
   );
 
@@ -52,7 +58,7 @@ export default function LabelInput({
 
 const styles = StyleSheet.create({
   label: {
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 6,
   },
   input: {
@@ -60,14 +66,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: '#111',
+    color: "#111",
   },
   error: {
-    color: '#d12c3c',
+    color: "#d12c3c",
     fontSize: 12,
     marginTop: 4,
   },
   readonly: {
-    backgroundColor: '#f4f4f4',
+    backgroundColor: "#f4f4f4",
   },
 });

@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   BounceIn,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
 interface ReanimatedMarkerProps {
   children: React.ReactNode;
@@ -25,9 +25,5 @@ export default function ReanimatedMarker({ children }: ReanimatedMarkerProps) {
     transform: [{ scale: scale.value }],
   }));
 
-  return (
-    <Animated.View style={animatedStyle} >
-      {children}
-    </Animated.View>
-  );
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
 }
