@@ -77,14 +77,10 @@ export default function Map({
             onPress={() => onSavedMarkerPress && onSavedMarkerPress(m)}
             pinColor='#FAA452'
           >
- 
-{/*          
               <Image 
                 source={{ uri: m.photoUri }}
                 style={styles.savedMarkerImage}
               />
-       */}
-           
           </Marker>
         ))}
       </MapView>
